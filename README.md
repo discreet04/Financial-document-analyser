@@ -1,241 +1,338 @@
-# Financial Document RAG System
+# Financial Document Analyser
 
-A full-stack Retrieval-Augmented Generation system for fintech document analysis. Users can upload financial PDFs, ask natural-language questions across their document library, receive grounded AI answers with page-level citations, review chat history, and generate executive summaries.
+A full-stack AI-powered Financial Document Analysis platform built using Retrieval-Augmented Generation (RAG). Users can upload financial reports, annual statements, corporate filings, and other PDF documents, then interact with them using natural language to obtain source-grounded answers, executive summaries, and document insights.
 
-## Stack
+The system combines semantic search, vector embeddings, and Large Language Models to provide accurate responses with page-level citations.
 
-- Frontend: React, Vite, Tailwind CSS
-- Backend: FastAPI, SQLAlchemy, Pydantic
-- Database: PostgreSQL
-- Authentication: JWT bearer tokens
-- Vector Search: FAISS
-- LLM: OpenAI GPT
-- Embeddings: OpenAI `text-embedding-3-small`
-- PDF Processing: `pdfplumber`
-- RAG Framework: LangChain
-- Runtime: Docker and Docker Compose
+---
+
+## Features
+
+### Authentication & User Management
+
+* User registration and login
+* JWT-based authentication
+* Protected API routes
+* User-specific document libraries
+
+### Document Processing
+
+* PDF upload and storage
+* Page-level text extraction
+* Intelligent text chunking
+* Metadata generation
+* Document management (upload, delete, list)
+
+### Retrieval-Augmented Generation (RAG)
+
+* Semantic search using FAISS
+* Hugging Face embeddings
+* Ollama (Llama 3) integration
+* Context-aware question answering
+* Source-grounded responses
+* Page-level citations
+* Document-specific retrieval filtering
+
+### Executive Summaries
+
+* AI-generated executive summaries
+* Key risks identification
+* Financial highlights extraction
+* Compliance concerns detection
+* Important findings generation
+
+### Dashboard & Analytics
+
+* Document statistics
+* Chat history
+* Recent activity tracking
+* Source management interface
+
+---
+
+## Technology Stack
+
+### Frontend
+
+* React
+* Vite
+* Tailwind CSS
+* Axios
+
+### Backend
+
+* FastAPI
+* SQLAlchemy
+* Pydantic
+* Alembic
+
+### Database
+
+* PostgreSQL
+
+### AI & RAG
+
+* LangChain
+* Hugging Face Embeddings (`all-MiniLM-L6-v2`)
+* Ollama
+* Llama 3
+* FAISS Vector Store
+
+### PDF Processing
+
+* PyPDF / PDF Extraction Services
+
+### Infrastructure
+
+* Docker
+* Docker Compose
+
+---
+
+## Architecture Overview
+
+User Upload PDF
+↓
+React Frontend
+↓
+FastAPI Backend
+↓
+PDF Extraction
+↓
+Text Chunking
+↓
+Metadata Creation
+↓
+PostgreSQL Storage
+↓
+Hugging Face Embeddings
+↓
+FAISS Vector Store
+↓
+Document-Specific Retrieval
+↓
+Ollama (Llama 3)
+↓
+Source-Grounded Answer + Citations
+
+---
 
 ## Core Capabilities
 
-- User registration and login with password hashing and JWT authentication
-- Protected APIs for documents, chat, summaries, and dashboard data
-- PDF upload with local storage in an `uploads/` directory
-- Page-preserving text extraction from financial PDFs
-- Chunking with LangChain `RecursiveCharacterTextSplitter`
-- Embedding generation with OpenAI `text-embedding-3-small`
-- Per-user FAISS vector indexes with document and page metadata
-- Multi-document retrieval across all uploaded user documents
-- GPT-generated answers constrained to retrieved context
-- Structured citations containing document name, page number, and source chunk text
-- ChatGPT-style frontend with citation display
-- Persistent chat history in PostgreSQL
-- Executive summary generation with key risks, financial highlights, compliance concerns, important findings, and summary text
-- Dashboard metrics for documents, chats, and recent activity
+* Upload and analyze financial documents
+* Ask questions about uploaded PDFs
+* Generate document summaries
+* Retrieve information with source citations
+* Perform semantic search across document content
+* Prevent cross-document retrieval contamination using document-specific filtering
+* Maintain persistent chat history
+* Store metadata and document chunks in PostgreSQL
+* Generate context-aware answers using local LLMs
+
+---
 
 ## Project Structure
 
 ```text
-financial-document-rag/
-  backend/
-    app/
-      api/
-        routes/
-          auth.py
-          documents.py
-          chat.py
-          summaries.py
-          dashboard.py
-        deps.py
-      core/
-        config.py
-        logging.py
-        security.py
-      db/
-        base.py
-        session.py
-      models/
-        user.py
-        document.py
-        document_chunk.py
-        chat_history.py
-      schemas/
-        auth.py
-        document.py
-        chat.py
-        summary.py
-        dashboard.py
-      services/
-        auth_service.py
-        document_service.py
-        pdf_service.py
-        vector_store.py
-        rag_service.py
-        summary_service.py
-        dashboard_service.py
-      main.py
-    uploads/
-    vectorstores/
-    Dockerfile
-    requirements.txt
-    alembic.ini
-  frontend/
-    src/
-      api/
-      components/
-      context/
-      pages/
-      types/
-      App.jsx
-      main.jsx
-      index.css
-    Dockerfile
-    package.json
-    vite.config.js
-    tailwind.config.js
-    postcss.config.js
-  docker-compose.yml
-  .env.example
-  README.md
+financial-document-analyser/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── db/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   │
+│   ├── uploads/
+│   ├── vectorstores/
+│   ├── alembic/
+│   ├── Dockerfile
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── context/
+│   │   └── App.jsx
+│   │
+│   ├── Dockerfile
+│   └── package.json
+│
+├── docker-compose.yml
+├── .env
+├── .env.example
+└── README.md
 ```
 
-## API Design
+---
+
+## API Endpoints
 
 ### Authentication
 
-- `POST /auth/register`
-- `POST /auth/login`
+```http
+POST /auth/register
+POST /auth/login
+```
 
 ### Documents
 
-- `POST /documents/upload`
-- `GET /documents`
-- `DELETE /documents/{id}`
-- `POST /documents/{id}/summary`
+```http
+POST /documents/upload
+GET /documents
+DELETE /documents/{id}
+POST /documents/{id}/summary
+```
 
 ### Chat
 
-- `POST /chat/query`
-- `GET /chat/history`
+```http
+POST /chat/query
+GET /chat/history
+```
 
 ### Dashboard
 
-- `GET /dashboard`
+```http
+GET /dashboard
+```
+
+---
 
 ## Environment Variables
-
-The project uses environment variables for secrets, database access, OpenAI configuration, CORS, and local storage paths.
 
 ```env
 POSTGRES_USER=rag_user
 POSTGRES_PASSWORD=rag_password
 POSTGRES_DB=financial_rag
+
 DATABASE_URL=postgresql+psycopg://rag_user:rag_password@postgres:5432/financial_rag
 
-JWT_SECRET_KEY=replace-with-a-secure-secret
+JWT_SECRET_KEY=your_secret_key
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-OPENAI_API_KEY=replace-with-your-openai-api-key
-OPENAI_CHAT_MODEL=gpt-4.1-mini
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-
 UPLOAD_DIR=uploads
 VECTOR_STORE_DIR=vectorstores
+
 BACKEND_CORS_ORIGINS=http://localhost:5173
+
+OLLAMA_MODEL=llama3
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-## Local Development
+---
 
-With Docker, the app will run with:
+## Installation
+
+### Clone Repository
 
 ```bash
-cp .env.example .env
-# edit .env and set OPENAI_API_KEY
+git clone https://github.com/yourusername/financial-document-analyser.git
+
+cd financial-document-analyser
+```
+
+### Start Ollama
+
+```bash
+ollama pull llama3
+ollama serve
+```
+
+### Run Application
+
+```bash
 docker compose up --build
 ```
 
-Then open:
+---
 
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:8000`
-- API docs: `http://localhost:8000/docs`
+## Access Application
 
-For non-Docker local development, set `DATABASE_URL=sqlite:///./financial_rag.db`, start the backend from the `backend/` folder, and start the frontend from the `frontend/` folder. The frontend expects the API at `http://localhost:8000` unless `VITE_API_BASE_URL` is changed.
+Frontend
 
-Uploads and document questions require `OPENAI_API_KEY`. Without it, the API will respond with `OPENAI_API_KEY is not configured` and the frontend will show that message.
-
-## Database Tables
-
-### users
-
-- `id`
-- `name`
-- `email`
-- `password_hash`
-- `created_at`
-
-### documents
-
-- `id`
-- `user_id`
-- `filename`
-- `storage_path`
-- `upload_date`
-
-### document_chunks
-
-- `id`
-- `document_id`
-- `user_id`
-- `page_number`
-- `chunk_index`
-- `chunk_text`
-- `created_at`
-
-### chat_history
-
-- `id`
-- `user_id`
-- `question`
-- `answer`
-- `citations`
-- `timestamp`
-
-## RAG Flow
-
-1. A user uploads a PDF.
-2. The backend stores the original file under `backend/uploads/`.
-3. `pdfplumber` extracts text page by page.
-4. LangChain splits page text into overlapping chunks.
-5. Chunks are saved in PostgreSQL with document and page metadata.
-6. OpenAI generates embeddings for each chunk.
-7. FAISS stores vectors and metadata locally under `backend/vectorstores/`.
-8. A user asks a question.
-9. The backend retrieves top-k relevant chunks across the user's documents.
-10. GPT receives only the retrieved context and must answer from that context.
-11. The API returns the answer plus structured citations.
-12. The chat is persisted in PostgreSQL.
-
-## Migrations
-
-The backend includes Alembic migration scaffolding and an initial schema migration. For local convenience, the FastAPI app also creates missing tables at startup. In production, prefer running migrations explicitly:
-
-```bash
-cd backend
-alembic upgrade head
+```text
+http://localhost:5173
 ```
 
-## Implementation Sequence
+Backend
 
-This repository is being generated incrementally, one file at a time:
+```text
+http://localhost:8000
+```
 
-1. `README.md`
-2. `.env.example`
-3. `docker-compose.yml`
-4. Backend dependency and Docker files
-5. Backend configuration, database, models, schemas, services, and routes
-6. Frontend dependency and build files
-7. Frontend API client, auth context, pages, components, and styling
-8. Final smoke-test and setup verification
+Swagger API Docs
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## RAG Workflow
+
+### Document Ingestion
+
+1. User uploads a PDF.
+2. Backend extracts text from each page.
+3. Text is split into chunks.
+4. Metadata is attached:
+
+   * document_id
+   * document_name
+   * page_number
+   * chunk_id
+5. Chunks are stored in PostgreSQL.
+
+### Indexing
+
+1. Hugging Face generates embeddings.
+2. Embeddings are stored in FAISS.
+3. User-specific vector indexes are maintained.
+
+### Question Answering
+
+1. User selects a document.
+2. Query is sent to backend.
+3. Retrieval is filtered using document_id.
+4. Top relevant chunks are fetched.
+5. Context and citations are sent to Llama 3.
+6. LLM generates an answer.
+7. Source citations are returned.
+
+---
+
+## Future Improvements
+
+* Multi-document comparison mode
+* Financial ratio analysis
+* OCR support for scanned PDFs
+* Export chat conversations
+* Advanced analytics dashboard
+* Cloud deployment (AWS/Azure/GCP)
+* Role-based access control
+
+---
+
+## Author
+
+Developed as a full-stack Generative AI project demonstrating:
+
+* Retrieval-Augmented Generation (RAG)
+* Vector Databases
+* LangChain
+* FastAPI
+* React
+* PostgreSQL
+* Hugging Face
+* Ollama
+* Docker
+
